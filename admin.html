@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key Manager Admin</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* ===== LOGIN ===== */
+#loginPage {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-box {
+  background: rgba(40, 40, 40, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 45px 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-box h1 {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 8px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.login-box .subtitle {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 30px;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.input-group input:focus {
+  border-color: rgba(120, 120, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(120, 120, 255, 0.1);
+}
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #5a5aff 0%, #7a5aff 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 8px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(90, 90, 255, 0.4);
+}
+
+.btn:active { transform: translateY(0); }
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
+}
+.btn-danger:hover { box-shadow: 0 8px 25px rgba(255, 77, 77, 0.4); }
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+}
+.btn-warning:hover { box-shadow: 0 8px 25px rgba(255, 167, 38, 0.4); }
+
+.btn-success {
+  background: linear-gradient(135deg, #26c6da 0%, #00acc1 100%);
+}
+.btn-success:hover { box-shadow: 0 8px 25px rgba(38, 198, 218, 0.4); }
+
+.error-msg {
+  color: #ff6b6b;
+  font-size: 13px;
+  text-align: center;
+  margin-top: 12px;
+  min-height: 18px;
+}
+
+/* ===== APP ===== */
+#appPage {
+  display: none;
+  width: 100%;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger {
+  width: 42px;
+  height: 42px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hamburger:hover { background: rgba(255, 255, 255, 0.1); }
+
+.hamburger span {
+  width: 20px;
+  height: 2px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+.topbar-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+}
+
+.admin-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5a5aff, #7a5aff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+}
+
+.admin-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.admin-role {
+  font-size: 11px;
+  color: #888;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 280px;
+  height: 100vh;
+  background: rgba(25, 25, 25, 0.95);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 200;
+  transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open { left: 0; }
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-header h2 {
+  font-size: 18px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.close-sidebar {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.close-sidebar:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  color: #bbb;
+  cursor: pointer;
+  transition: all 0.25s;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.menu-item:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+
+.menu-item.active {
+  background: linear-gradient(135deg, rgba(90, 90, 255, 0.25), rgba(122, 90, 255, 0.25));
+  color: #fff;
+  border: 1px solid rgba(120, 120, 255, 0.3);
+}
+
+.menu-item .icon { font-size: 18px; width: 24px; text-align: center; }
+
+.logout-btn {
+  margin-top: auto;
+  background: rgba(255, 77, 77, 0.1);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+  color: #ff6b6b;
+}
+
+.logout-btn:hover { background: rgba(255, 77, 77, 0.2); color: #ff8080; }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 150;
+  display: none;
+  animation: fadeIn 0.3s;
+}
+
+.overlay.show { display: block; }
+
+/* Main content */
+.main-content {
+  padding: 28px;
+  flex: 1;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s; }
+
+.section-card {
+  background: rgba(40, 40, 40, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.section-card h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+  .topbar { padding: 14px 16px; }
+  .main-content { padding: 16px; }
+  .section-card { padding: 20px; }
+  .admin-info .admin-role { display: none; }
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 13px 15px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: rgba(120, 120, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(120, 120, 255, 0.1);
+}
+
+.field textarea { resize: vertical; min-height: 70px; }
+
+.field select option { background: #222; }
+
+/* Key list */
+.key-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.key-item {
+  background: rgba(30, 30, 30, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  transition: all 0.25s;
+}
+
+.key-item:hover {
+  border-color: rgba(120, 120, 255, 0.3);
+  background: rgba(35, 35, 35, 0.8);
+}
+
+.key-info { flex: 1; min-width: 200px; }
+
+.key-code {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+
+.key-meta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #999;
+}
+
+.key-meta span { display: flex; align-items: center; gap: 5px; }
+
+.badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-active {
+  background: rgba(38, 198, 218, 0.15);
+  color: #26c6da;
+  border: 1px solid rgba(38, 198, 218, 0.3);
+}
+
+.badge-inactive {
+  background: rgba(255, 167, 38, 0.15);
+  color: #ffa726;
+  border: 1px solid rgba(255, 167, 38, 0.3);
+}
+
+.badge-expired {
+  background: rgba(255, 77, 77, 0.15);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 77, 77, 0.3);
+}
+
+.key-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn-sm {
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.btn-sm:hover { transform: translateY(-1px); }
+
+.btn-copy {
+  background: rgba(90, 90, 255, 0.2);
+  border: 1px solid rgba(90, 90, 255, 0.3);
+  color: #9a9aff;
+}
+.btn-copy:hover { background: rgba(90, 90, 255, 0.35); }
+
+.btn-reset {
+  background: rgba(255, 167, 38, 0.15);
+  border: 1px solid rgba(255, 167, 38, 0.3);
+  color: #ffa726;
+}
+.btn-reset:hover { background: rgba(255, 167, 38, 0.3); }
+
+.btn-delete {
+  background: rgba(255, 77, 77, 0.15);
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  color: #ff6b6b;
+}
+.btn-delete:hover { background: rgba(255, 77, 77, 0.3); }
+
+/* Generated keys box */
+.generated-box {
+  margin-top: 20px;
+  background: rgba(15, 15, 15, 0.9);
+  border: 1px solid rgba(120, 120, 255, 0.2);
+  border-radius: 14px;
+  padding: 18px;
+  display: none;
+}
+
+.generated-box.show { display: block; animation: fadeIn 0.4s; }
+
+.generated-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.generated-header h4 {
+  font-size: 14px;
+  color: #9a9aff;
+  font-weight: 600;
+}
+
+.generated-list {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #e0e0e0;
+  max-height: 240px;
+  overflow-y: auto;
+  line-height: 1.9;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(40, 40, 40, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(120, 120, 255, 0.3);
+  border-radius: 14px;
+  padding: 14px 22px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  transform: translateY(120px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  max-width: 90vw;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+
+.toast.success { border-color: rgba(38, 198, 218, 0.4); }
+.toast.error { border-color: rgba(255, 77, 77, 0.4); }
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: rgba(40, 40, 40, 0.55);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: #666;
+}
+
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb { background: rgba(120,120,120,0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(120,120,120,0.5); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <div class="login-box">
+    <h1>🔐 Key Manager</h1>
+    <p class="subtitle">Đăng nhập để quản lý key</p>
+    <div class="input-group">
+      <label>Tên đăng nhập</label>
+      <input type="text" id="loginUser" placeholder="Nhập tên đăng nhập..." autocomplete="off">
+    </div>
+    <div class="input-group">
+      <label>Mật khẩu</label>
+      <input type="password" id="loginPass" placeholder="Nhập mật khẩu..." autocomplete="off">
+    </div>
+    <button class="btn" onclick="handleLogin()">Đăng nhập</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+</div>
+
+<!-- APP PAGE -->
+<div id="appPage">
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>📋 Menu</h2>
+      <button class="close-sidebar" onclick="closeSidebar()">×</button>
+    </div>
+    <div class="menu-item active" data-tab="manage" onclick="switchTab('manage')">
+      <span class="icon">🔑</span> Quản lý Key
+    </div>
+    <div class="menu-item" data-tab="create" onclick="switchTab('create')">
+      <span class="icon">➕</span> Tạo Key
+    </div>
+    <div class="menu-item logout-btn" onclick="logout()">
+      <span class="icon">🚪</span> Đăng xuất
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="hamburger" onclick="openSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="topbar-title" id="topbarTitle">Quản lý Key</div>
+    </div>
+    <div class="admin-info">
+      <div class="admin-avatar" id="adminAvatar">K</div>
+      <div>
+        <div class="admin-name" id="adminName">-</div>
+        <div class="admin-role" id="adminRole">Admin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main-content">
+
+    <!-- TAB MANAGE -->
+    <div class="tab-content active" id="tab-manage">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Tổng Key</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statActive" style="color:#26c6da">0</div>
+          <div class="stat-label">Đã kích hoạt</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statInactive" style="color:#ffa726">0</div>
+          <div class="stat-label">Chưa kích hoạt</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statExpired" style="color:#ff6b6b">0</div>
+          <div class="stat-label">Hết hạn</div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3>🔑 Danh sách Key</h3>
+        <div class="key-list" id="keyList">
+          <div class="empty-state">
+            <div class="icon">📭</div>
+            <div>Chưa có key nào. Hãy tạo key mới!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB CREATE -->
+    <div class="tab-content" id="tab-create">
+      <div class="section-card">
+        <h3>➕ Tạo Key mới</h3>
+        <div class="form-row">
+          <div class="field">
+            <label>Key tuỳ chỉnh (để trống sẽ tự tạo)</label>
+            <input type="text" id="customKey" placeholder="DD-XXXX-XXXX-XX (để trống = tự động)">
+          </div>
+          <div class="field">
+            <label>Số lượng</label>
+            <input type="number" id="keyCount" value="1" min="1" max="100">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="field">
+            <label>Thời hạn</label>
+            <select id="keyDuration">
+              <option value="3600">1 Giờ</option>
+              <option value="86400" selected>1 Ngày</option>
+              <option value="604800">7 Ngày</option>
+              <option value="2592000">30 Ngày</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ghi chú (tuỳ chọn)</label>
+            <input type="text" id="keyNote" placeholder="VD: Key cho khách VIP...">
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="createKeys()">🔑 Tạo Key</button>
+
+        <div class="generated-box" id="generatedBox">
+          <div class="generated-header">
+            <h4>✅ Key đã tạo</h4>
+            <button class="btn-sm btn-copy" onclick="copyAllGenerated()">📋 Copy All</button>
+          </div>
+          <div class="generated-list" id="generatedList"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ CẤU HÌNH JSONBIN ============ */
+const JSONBIN_CONFIG = {
+  BIN_ID: '6a9aabf0f5f4af5e2969af3c',
+  MASTER_KEY: '$2a$10$cz3tGX9TD9ZQdseuTsjcB.f5JRe8HIWxwgiLDhbEmRGLpDSOR65Uy',
+  ACCESS_KEY: '$2a$10$QtsYVPNKmCTwBXYX7/BF9Obo.rbu4.abXfs2AcqpMS9f7Z4w7DmA2'
+};
+
+const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.BIN_ID}`;
+
+/* ============ TÀI KHOẢN ============ */
+const ACCOUNTS = [
+  { username: 'kduy', password: 'kduy13', display: 'kduy', role: 'Admin' },
+  { username: 'nduy', password: '02112010', display: 'nduy', role: 'Admin' }
+];
+
+/* ============ STATE ============ */
+let keys = [];
+let currentUser = null;
+let isSyncing = false;
+
+/* ============ LOCAL STORAGE FALLBACK ============ */
+const LS_KEY = 'keymanager_keys_v1';
+const LS_USER = 'keymanager_user_v1';
+
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(keys)); } catch(e) {}
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) keys = JSON.parse(raw) || [];
+  } catch(e) { keys = []; }
+}
+function saveUserLocal() {
+  try { localStorage.setItem(LS_USER, JSON.stringify(currentUser)); } catch(e) {}
+}
+function loadUserLocal() {
+  try {
+    const raw = localStorage.getItem(LS_USER);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+function clearUserLocal() {
+  try { localStorage.removeItem(LS_USER); } catch(e) {}
+}
+
+/* ============ JSONBIN API ============ */
+async function apiLoad() {
+  try {
+    const res = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: {
+        'X-Master-Key': JSONBIN_CONFIG.MASTER_KEY,
+        'X-Access-Key': JSONBIN_CONFIG.ACCESS_KEY
+      }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const data = json.record;
+    if (data && Array.isArray(data.keys)) {
+      keys = data.keys;
+      saveLocal();
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.warn('JSONBin load failed, using local:', e);
+    return false;
+  }
+}
+
+async function apiSave() {
+  if (isSyncing) return false;
+  isSyncing = true;
+  try {
+    const res = await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_CONFIG.MASTER_KEY,
+        'X-Access-Key': JSONBIN_CONFIG.ACCESS_KEY
+      },
+      body: JSON.stringify({ keys, updatedAt: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return true;
+  } catch (e) {
+    console.warn('JSONBin save failed, saved locally only:', e);
+    return false;
+  } finally {
+    isSyncing = false;
+  }
+}
+
+async function syncData() {
+  await apiSave();
+  saveLocal();
+}
+
+/* ============ AUTH ============ */
+function handleLogin() {
+  const user = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+
+  const acc = ACCOUNTS.find(a => a.username === user && a.password === pass);
+  if (!acc) {
+    errEl.textContent = '❌ Sai tên đăng nhập hoặc mật khẩu!';
+    return;
+  }
+
+  currentUser = { username: acc.username, display: acc.display, role: acc.role };
+  saveUserLocal();
+  enterApp();
+}
+
+function enterApp() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('appPage').style.display = 'flex';
+
+  document.getElementById('adminName').textContent = currentUser.display;
+  document.getElementById('adminRole').textContent = currentUser.role;
+  document.getElementById('adminAvatar').textContent =
+    currentUser.display.charAt(0).toUpperCase();
+
+  loadLocal();
+  renderKeys();
+
+  // Sync từ cloud
+  apiLoad().then(ok => {
+    if (ok) renderKeys();
+  });
+}
+
+function logout() {
+  currentUser = null;
+  clearUserLocal();
+  document.getElementById('appPage').style.display = 'none';
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').textContent = '';
+  closeSidebar();
+}
+
+/* Auto login nếu có session */
+window.addEventListener('DOMContentLoaded', () => {
+  loadLocal();
+  const saved = loadUserLocal();
+  if (saved && ACCOUNTS.find(a => a.username === saved.username)) {
+    currentUser = saved;
+    enterApp();
+  }
+});
+
+/* ============ SIDEBAR ============ */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+/* ============ TABS ============ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.menu-item[data-tab]').forEach(m => m.classList.remove('active'));
+
+  document.getElementById('tab-' + tab).classList.add('active');
+  const menu = document.querySelector(`.menu-item[data-tab="${tab}"]`);
+  if (menu) menu.classList.add('active');
+
+  document.getElementById('topbarTitle').textContent =
+    tab === 'manage' ? 'Quản lý Key' : 'Tạo Key';
+
+  if (tab === 'manage') renderKeys();
+  closeSidebar();
+}
+
+/* ============ KEY GENERATION ============ */
+function randomChar(chars) {
+  return chars[Math.floor(Math.random() * chars.length)];
+}
+function randomBlock(len, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') {
+  let s = '';
+  for (let i = 0; i < len; i++) s += randomChar(chars);
+  return s;
+}
+function autoKey() {
+  return `DD-${randomBlock(4)}-${randomBlock(4)}-${randomBlock(2)}`;
+}
+
+/* ============ CREATE ============ */
+function createKeys() {
+  const custom = document.getElementById('customKey').value.trim();
+  const count = Math.max(1, Math.min(100, parseInt(document.getElementById('keyCount').value) || 1));
+  const duration = parseInt(document.getElementById('keyDuration').value);
+  const note = document.getElementById('keyNote').value.trim();
+
+  const created = [];
+
+  for (let i = 0; i < count; i++) {
+    let code;
+    if (custom) {
+      code = count === 1 ? custom : `${custom}-${i + 1}`;
+    } else {
+      code = autoKey();
+      // tránh trùng
+      let tries = 0;
+      while (keys.find(k => k.key === code) && tries < 10) {
+        code = autoKey();
+        tries++;
+      }
+    }
+
+    if (keys.find(k => k.key === code)) {
+      showToast('⚠️ Key trùng: ' + code, 'error');
+      continue;
+    }
+
+    const item = {
+      id: 'k_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8),
+      key: code,
+      note: note,
+      duration: duration,
+      createdAt: Date.now(),
+      activatedAt: null,
+      expiresAt: null,
+      status: 'inactive'
+    };
+    keys.push(item);
+    created.push(item);
+  }
+
+  saveLocal();
+  renderKeys();
+  syncData();
+
+  // Hiển thị box key đã tạo
+  const box = document.getElementById('generatedBox');
+  const list = document.getElementById('generatedList');
+  if (created.length) {
+    list.textContent = created.map(k => k.key).join('\n');
+    box.classList.add('show');
+    box.dataset.keys = created.map(k => k.key).join('\n');
+    showToast(`✅ Đã tạo ${created.length} key!`, 'success');
+  }
+
+  // Reset custom input
+  document.getElementById('customKey').value = '';
+}
+
+function copyAllGenerated() {
+  const box = document.getElementById('generatedBox');
+  const text = box.dataset.keys || '';
+  if (!text) return;
+  navigator.clipboard.writeText(text)
+    .then(() => showToast('📋 Đã copy tất cả key!', 'success'))
+    .catch(() => fallbackCopy(text));
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showToast('📋 Đã copy!', 'success'); }
+  catch (e) { showToast('❌ Không copy được', 'error'); }
+  document.body.removeChild(ta);
+}
+
+/* ============ RENDER ============ */
+function getStatus(k) {
+  if (k.activatedAt && k.expiresAt) {
+    if (Date.now() >= k.expiresAt) return 'expired';
+    return 'active';
+  }
+  return 'inactive';
+}
+
+function statusBadge(status) {
+  if (status === 'active') return '<span class="badge badge-active">✅ Đã kích hoạt</span>';
+  if (status === 'expired') return '<span class="badge badge-expired">⌛ Hết hạn</span>';
+  return '<span class="badge badge-inactive">⏳ Chưa kích hoạt</span>';
+}
+
+function formatTime(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function formatRemaining(ms) {
+  if (ms <= 0) return 'Đã hết';
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400);
+  const h = Math.floor((s % 86400) / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  if (d > 0) return `${d}d ${h}h ${m}m`;
+  if (h > 0) return `${h}h ${m}m ${sec}s`;
+  return `${m}m ${sec}s`;
+}
+
+function renderKeys() {
+  const listEl = document.getElementById('keyList');
+  if (!keys.length) {
+    listEl.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <div>Chưa có key nào. Hãy tạo key mới!</div>
+      </div>`;
+    updateStats();
+    return;
+  }
+
+  // Sắp xếp mới nhất lên đầu
+  const sorted = [...keys].sort((a, b) => b.createdAt - a.createdAt);
+
+  listEl.innerHTML = sorted.map(k => {
+    const st = getStatus(k);
+    let remaining = '';
+    if (st === 'active') {
+      remaining = `Còn lại: ${formatRemaining(k.expiresAt - Date.now())}`;
+    } else if (st === 'expired') {
+      remaining = 'Đã hết hạn';
+    } else {
+      remaining = 'Chưa kích hoạt';
+    }
+
+    return `
+      <div class="key-item" data-id="${k.id}">
+        <div class="key-info">
+          <div class="key-code">${escapeHtml(k.key)}</div>
+          <div class="key-meta">
+            <span>${statusBadge(st)}</span>
+            <span>📝 ${escapeHtml(k.note || 'Không có ghi chú')}</span>
+            <span>⏱ ${remaining}</span>
+          </div>
+        </div>
+        <div class="key-actions">
+          <button class="btn-sm btn-copy" onclick="copyKey('${k.id}')">📋 Copy</button>
+          <button class="btn-sm btn-reset" onclick="resetKey('${k.id}')">🔄 Reset</button>
+          <button class="btn-sm btn-delete" onclick="deleteKey('${k.id}')">🗑 Xoá</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateStats();
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function updateStats() {
+  let active = 0, inactive = 0, expired = 0;
+  keys.forEach(k => {
+    const st = getStatus(k);
+    if (st === 'active') active++;
+    else if (st === 'expired') expired++;
+    else inactive++;
+  });
+  document.getElementById('statTotal').textContent = keys.length;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statInactive').textContent = inactive;
+  document.getElementById('statExpired').textContent = expired;
+}
+
+/* ============ ACTIONS ============ */
+function copyKey(id) {
+  const k = keys.find(x => x.id === id);
+  if (!k) return;
+
+  // Nếu chưa kích hoạt → kích hoạt khi copy
+  if (!k.activatedAt) {
+    k.activatedAt = Date.now();
+    k.expiresAt = k.activatedAt + k.duration * 1000;
+    k.status = 'active';
+    saveLocal();
+    syncData();
+    showToast('🚀 Key đã kích hoạt và copy!', 'success');
+    renderKeys();
+  } else {
+    showToast('📋 Đã copy key!', 'success');
+  }
+
+  navigator.clipboard.writeText(k.key).catch(() => fallbackCopy(k.key));
+}
+
+function resetKey(id) {
+  const k = keys.find(x => x.id === id);
+  if (!k) return;
+  if (!confirm(`Reset key "${k.key}"? Key sẽ về trạng thái chưa kích hoạt.`)) return;
+
+  k.activatedAt = null;
+  k.expiresAt = null;
+  k.status = 'inactive';
+  saveLocal();
+  syncData();
+  renderKeys();
+  showToast('🔄 Đã reset key!', 'success');
+}
+
+function deleteKey(id) {
+  const k = keys.find(x => x.id === id);
+  if (!k) return;
+  if (!confirm(`Xoá key "${k.key}"? Hành động không thể hoàn tác.`)) return;
+
+  keys = keys.filter(x => x.id !== id);
+  saveLocal();
+  syncData();
+  renderKeys();
+  showToast('🗑 Đã xoá key!', 'success');
+}
+
+/* ============ TOAST ============ */
+let toastTimer = null;
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    el.classList.remove('show');
+  }, 2600);
+}
+
+/* ============ CẬP NHẬT ĐẾM NGƯỢC ============ */
+setInterval(() => {
+  if (document.getElementById('tab-manage').classList.contains('active')) {
+    // Cập nhật nhẹ các key đã kích hoạt (chỉ render lại phần remaining)
+    const activeItems = document.querySelectorAll('.key-item');
+    if (activeItems.length) renderKeys();
+  }
+}, 10000);
+
+/* ============ ENTER ĐỂ LOGIN ============ */
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+document.getElementById('loginUser').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginPass').focus();
+});
+</script>
+</body>
+</html>
